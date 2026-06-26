@@ -13,9 +13,9 @@ class App {
     this.analysis = null;
     this.rafId    = null;
 
+    populateLibrarySelect(document.getElementById('library-select'));
     this._initResize();
     this._bindUI();
-    populateLibrarySelect(document.getElementById('library-select'));
     this._checkProtocol();
 
     this.engine.setPalette(defaultPalette());

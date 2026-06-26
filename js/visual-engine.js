@@ -369,7 +369,7 @@ class VisualEngine {
       const t       = i / (N - 1);
       const tSq     = t * t;                       // log-like: denser at low end
       const wLow    = Math.exp(-tSq * 6);
-      const wMid    = Math.exp(-(tSq - 0.18) ** 2 / 0.06);
+      const wMid    = Math.exp(-(tSq - 0.18) * (tSq - 0.18) / 0.06);
       const wHigh   = Math.pow(t, 1.6);
       const energy  = wLow * low + wMid * mid * 0.9 + wHigh * high;
       // Per-bar shimmer: shifts with rms so bars appear to breathe
