@@ -9,7 +9,7 @@
   --muted:    #9c9088;
   --border:   rgba(150, 130, 110, 0.2);
   --accent:   #d05830;
-  --canvas:   #0d0b09;   /* brun très sombre, chaud — pas bleu-noir */
+  --canvas:   #090603;   /* brun très sombre chaud — bord du dégradé canvas */
   --font-d:   'Playfair Display', Georgia, serif;
   --font-b:   'DM Sans', system-ui, sans-serif;
   --card-r:   20px;
@@ -31,30 +31,15 @@ html, body {
   z-index: 0;
 }
 
-/* ── Atmosphère canvas ───────────────────────────────────────────────────────── */
-/*  Halo chaud au centre pour que le canvas ne soit pas juste noir.        */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  background: radial-gradient(ellipse 70% 55% at 50% 38%,
-    rgba(208, 88, 48, 0.08) 0%,
-    transparent 70%);
-  pointer-events: none;
-}
-
 /* ── Fondu bas (canvas → crème de la carte) ──────────────────────────────────── */
-/*  Le dégradé va jusqu'à la couleur exacte de la carte (#f9f3e9),
-    la carte devient une continuation naturelle du canvas.                  */
 #canvas-fade {
   position: fixed;
   bottom: 0;
   left: 0; right: 0;
-  height: 300px;
+  height: 280px;
   background: linear-gradient(to bottom,
     transparent 0%,
-    rgba(249, 243, 233, 0.55) 65%,
+    rgba(249, 243, 233, 0.5) 60%,
     var(--cream) 100%);
   z-index: 1;
   pointer-events: none;

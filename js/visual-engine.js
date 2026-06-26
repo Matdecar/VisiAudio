@@ -87,12 +87,17 @@ class VisualEngine {
 
   clear() {
     const { ctx, _w: W, _h: H } = this;
-    ctx.fillStyle = '#090910';
+    // Fond brun sombre chaud — dégradé du centre (légèrement plus clair) aux bords
+    const bg = ctx.createRadialGradient(W * .5, H * .42, 0, W * .5, H * .42, Math.max(W, H) * .75);
+    bg.addColorStop(0, '#1e150a');
+    bg.addColorStop(1, '#090603');
+    ctx.fillStyle = bg;
     ctx.fillRect(0, 0, W, H);
+    // Halo de palette au centre
     if (this._pal && this._pal.length >= 2) {
       const [r, g, b] = this._pal[Math.floor(this._pal.length / 2)];
-      const gr = ctx.createRadialGradient(W * .5, H * .5, 0, W * .5, H * .5, Math.max(W, H) * .6);
-      gr.addColorStop(0, `rgba(${r},${g},${b},0.07)`);
+      const gr = ctx.createRadialGradient(W * .5, H * .5, 0, W * .5, H * .5, Math.max(W, H) * .55);
+      gr.addColorStop(0, `rgba(${r},${g},${b},0.13)`);
       gr.addColorStop(1, 'transparent');
       ctx.fillStyle = gr;
       ctx.fillRect(0, 0, W, H);
