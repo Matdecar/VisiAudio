@@ -67,14 +67,14 @@ class VisualEngine {
 
     const ctx = this.ctx;
 
-    // ── Pass 1: Glow (blurred, screen-composited) ─────────────────────────
+    // ── Pass 1: Glow (blurred, multiply sur fond clair) ──────────────────
     ctx.save();
-    ctx.filter                   = 'blur(9px)';
-    ctx.globalCompositeOperation = 'screen';
-    ctx.globalAlpha              = 0.40;
+    ctx.filter                   = 'blur(8px)';
+    ctx.globalCompositeOperation = 'multiply';
+    ctx.globalAlpha              = 0.38;
     ctx.lineCap                  = 'round';
     ctx.lineJoin                 = 'round';
-    this._render(ctx, sub, p, 2.6);
+    this._render(ctx, sub, p, 2.4);
     ctx.restore();
 
     // ── Pass 2: Crisp core ────────────────────────────────────────────────
@@ -87,21 +87,8 @@ class VisualEngine {
 
   clear() {
     const { ctx, _w: W, _h: H } = this;
-    // Fond brun sombre chaud — dégradé du centre (légèrement plus clair) aux bords
-    const bg = ctx.createRadialGradient(W * .5, H * .42, 0, W * .5, H * .42, Math.max(W, H) * .75);
-    bg.addColorStop(0, '#1e150a');
-    bg.addColorStop(1, '#090603');
-    ctx.fillStyle = bg;
+    ctx.fillStyle = '#f9f3e9';
     ctx.fillRect(0, 0, W, H);
-    // Halo de palette au centre
-    if (this._pal && this._pal.length >= 2) {
-      const [r, g, b] = this._pal[Math.floor(this._pal.length / 2)];
-      const gr = ctx.createRadialGradient(W * .5, H * .5, 0, W * .5, H * .5, Math.max(W, H) * .55);
-      gr.addColorStop(0, `rgba(${r},${g},${b},0.13)`);
-      gr.addColorStop(1, 'transparent');
-      ctx.fillStyle = gr;
-      ctx.fillRect(0, 0, W, H);
-    }
   }
 
   exportPNG() {
@@ -349,8 +336,9 @@ class VisualEngine {
     const halfH = H * 0.46;
 
     ctx.save();
-    ctx.filter      = 'blur(22px)';
-    ctx.globalAlpha = 0.28;
+    ctx.filter                   = 'blur(22px)';
+    ctx.globalCompositeOperation = 'multiply';
+    ctx.globalAlpha              = 0.22;
 
     for (let i = 0; i < N; i++) {
       const h  = bars[i] * halfH;
@@ -394,8 +382,7 @@ class VisualEngine {
     const f   = pos - i0;
     const [r1, g1, b1] = pal[i0];
     const [r2, g2, b2] = pal[Math.min(i0 + 1, n - 1)];
-    const k = 1.1;
-    return `rgb(${Math.min(255, Math.round((r1+(r2-r1)*f)*k))},${Math.min(255, Math.round((g1+(g2-g1)*f)*k))},${Math.min(255, Math.round((b1+(b2-b1)*f)*k))})`;
+    return `rgb(${Math.round(r1+(r2-r1)*f)},${Math.round(g1+(g2-g1)*f)},${Math.round(b1+(b2-b1)*f)})`;
   }
 }
 

@@ -218,11 +218,11 @@ class App {
   _drawIdle() {
     const { ctx, _w: W, _h: H } = this.engine;
     this.engine.clear();
-    // Soft vignette accent
-    const grad = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, Math.min(W, H) * 0.55);
-    grad.addColorStop(0,   'rgba(90, 30, 160, 0.12)');
-    grad.addColorStop(0.5, 'rgba(0, 150, 200, 0.04)');
-    grad.addColorStop(1,   'rgba(9, 9, 14, 0)');
+    // Halo corail subtil au centre sur fond clair
+    const grad = ctx.createRadialGradient(W / 2, H * .42, 0, W / 2, H * .42, Math.min(W, H) * 0.52);
+    grad.addColorStop(0,   'rgba(208, 88, 48, 0.07)');
+    grad.addColorStop(0.6, 'rgba(208, 88, 48, 0.02)');
+    grad.addColorStop(1,   'rgba(0, 0, 0, 0)');
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, W, H);
   }
