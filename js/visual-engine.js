@@ -20,8 +20,9 @@ class VisualEngine {
     this.mode     = 'spiral';
     this._pal     = null;
     this._raw     = defaultPalette();
-    this._geo     = null;   // cached geometry (invalidated on new frames/progress)
+    this._geo     = null;
     this._geoKey  = '';
+    this.mode     = 'bloom';
   }
 
   setPalette(colors) {
@@ -58,6 +59,12 @@ class VisualEngine {
     }
 
     this.clear();
+
+    // ── Background bar visualizer ─────────────────────────────────────────
+    const curIdx   = Math.min(Math.round(p * (frames.length - 1)), frames.length - 1);
+    const curFrame = frames[curIdx];
+    this._drawBgBars(curFrame);
+
     const ctx = this.ctx;
 
     // ── Pass 1: Glow (blurred, screen-composited) ─────────────────────────
@@ -319,6 +326,57 @@ class VisualEngine {
       ctx.lineWidth   = .85 * wm;
       ctx.stroke();
     }
+  }
+
+  // ── Background bar visualizer ─────────────────────────────────────────────
+  //
+  //   N symmetric bars (grow from H/2 upward AND downward) driven by the
+  //   current-frame energy. Drawn with heavy blur → soft neon glow layer.
+  //   Fake spectrum: 3 bands (low/mid/high) spread across N bins with a
+  //   log-like weighting + per-bar shimmer tied to rms.
+
+  _drawBgBars(frame) {
+    if (!frame) return;
+    const { ctx, _w: W, _h: H } = this;
+    const N     = 72;
+    const bars  = this._spectrum(frame, N);
+    const barW  = W / N;
+    const halfH = H * 0.46;
+
+    ctx.save();
+    ctx.filter      = 'blur(22px)';
+    ctx.globalAlpha = 0.28;
+
+    for (let i = 0; i < N; i++) {
+      const h  = bars[i] * halfH;
+      if (h < 1) continue;
+      const x  = i * barW;
+      const t  = i / (N - 1);
+      // Solid color — heavy blur makes per-bar gradients invisible anyway
+      ctx.fillStyle = this._colorAt(t);
+      ctx.fillRect(x, H * 0.5 - h, barW - 1, h * 2);
+    }
+
+    ctx.restore();
+  }
+
+  // Distribute 3 energy bands across N bins with log-like frequency warping.
+  _spectrum(frame, N) {
+    const { rms, low, high } = frame;
+    const mid  = Math.max(0, rms - low * 0.6 - high * 0.4);
+    const bars = new Float32Array(N);
+    for (let i = 0; i < N; i++) {
+      const t       = i / (N - 1);
+      const tSq     = t * t;                       // log-like: denser at low end
+      const wLow    = Math.exp(-tSq * 6);
+      const wMid    = Math.exp(-(tSq - 0.18) ** 2 / 0.06);
+      const wHigh   = Math.pow(t, 1.6);
+      const energy  = wLow * low + wMid * mid * 0.9 + wHigh * high;
+      // Per-bar shimmer: shifts with rms so bars appear to breathe
+      const shimmer = 0.82 + 0.18 * Math.sin(i * 1.9 + rms * 8);
+      bars[i] = Math.min(1, energy * shimmer);
+    }
+    return bars;
   }
 
   // ── Color ─────────────────────────────────────────────────────────────────
