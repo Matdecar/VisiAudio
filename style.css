@@ -31,15 +31,31 @@ html, body {
   z-index: 0;
 }
 
-/* ── Fondu bas (canvas → carte) ──────────────────────────────────────────────── */
-/*  Crée un dégradé vertical sous la visualisation qui absorbe le canvas
-    avant la carte, de sorte que la carte semble émerger naturellement.  */
+/* ── Atmosphère canvas ───────────────────────────────────────────────────────── */
+/*  Halo chaud au centre pour que le canvas ne soit pas juste noir.        */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: radial-gradient(ellipse 70% 55% at 50% 38%,
+    rgba(208, 88, 48, 0.08) 0%,
+    transparent 70%);
+  pointer-events: none;
+}
+
+/* ── Fondu bas (canvas → crème de la carte) ──────────────────────────────────── */
+/*  Le dégradé va jusqu'à la couleur exacte de la carte (#f9f3e9),
+    la carte devient une continuation naturelle du canvas.                  */
 #canvas-fade {
   position: fixed;
   bottom: 0;
   left: 0; right: 0;
-  height: 220px;
-  background: linear-gradient(to bottom, transparent 0%, var(--canvas) 100%);
+  height: 300px;
+  background: linear-gradient(to bottom,
+    transparent 0%,
+    rgba(249, 243, 233, 0.55) 65%,
+    var(--cream) 100%);
   z-index: 1;
   pointer-events: none;
 }
