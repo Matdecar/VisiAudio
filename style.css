@@ -31,6 +31,30 @@ html, body {
   z-index: 0;
 }
 
+/* ── Thème sombre ────────────────────────────────────────────────────────────── */
+[data-theme="dark"] {
+  --cream:   #0e0b18;
+  --cream-2: #181428;
+  --text:    #e8e2f8;
+  --muted:   #8b7caa;
+  --border:  rgba(140, 110, 200, 0.2);
+  --accent:  #7c4dff;
+  --canvas:  #090910;
+}
+[data-theme="dark"] body { background: #090910; }
+
+[data-theme="dark"] #ctrl-card {
+  background: rgba(14, 11, 24, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+[data-theme="dark"] #brand-pill {
+  background: rgba(14, 11, 24, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+[data-theme="dark"] .sel-wrap select option { background: #181428; }
+
 #canvas-fade { display: none; }
 
 /* ── Drag overlay ────────────────────────────────────────────────────────────── */
@@ -381,6 +405,20 @@ html, body {
   border-color: var(--text); color: var(--text); background: var(--cream-2);
 }
 .btn-export:disabled { opacity: 0.28; cursor: not-allowed; }
+
+/* Bouton thème */
+.btn-theme {
+  flex-shrink: 0;
+  width: 34px; height: 34px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: none; border: 1.5px solid var(--border);
+  color: var(--muted);
+  cursor: pointer; border-radius: 8px;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  margin-left: 2px;
+}
+.btn-theme svg { width: 14px; height: 14px; }
+.btn-theme:hover { border-color: var(--text); color: var(--text); background: var(--cream-2); }
 
 /* ── Toast ───────────────────────────────────────────────────────────────────── */
 #toast {

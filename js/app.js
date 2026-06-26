@@ -109,6 +109,9 @@ class App {
 
     // Export
     document.getElementById('export-btn').addEventListener('click', () => this._export());
+
+    // Thème
+    document.getElementById('theme-btn').addEventListener('click', () => this._toggleTheme());
   }
 
   // ── Load ──────────────────────────────────────────────────────────────────
@@ -218,13 +221,47 @@ class App {
   _drawIdle() {
     const { ctx, _w: W, _h: H } = this.engine;
     this.engine.clear();
-    // Halo corail subtil au centre sur fond clair
+    const dark = document.documentElement.dataset.theme === 'dark';
     const grad = ctx.createRadialGradient(W / 2, H * .42, 0, W / 2, H * .42, Math.min(W, H) * 0.52);
-    grad.addColorStop(0,   'rgba(208, 88, 48, 0.07)');
-    grad.addColorStop(0.6, 'rgba(208, 88, 48, 0.02)');
-    grad.addColorStop(1,   'rgba(0, 0, 0, 0)');
+    if (dark) {
+      grad.addColorStop(0,   'rgba(100, 40, 220, 0.16)');
+      grad.addColorStop(0.5, 'rgba(60, 20, 140, 0.06)');
+      grad.addColorStop(1,   'rgba(0, 0, 0, 0)');
+    } else {
+      grad.addColorStop(0,   'rgba(208, 88, 48, 0.07)');
+      grad.addColorStop(0.6, 'rgba(208, 88, 48, 0.02)');
+      grad.addColorStop(1,   'rgba(0, 0, 0, 0)');
+    }
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, W, H);
+  }
+
+  _toggleTheme() {
+    const btn    = document.getElementById('theme-btn');
+    const isDark = document.documentElement.dataset.theme === 'dark';
+    if (isDark) {
+      document.documentElement.removeAttribute('data-theme');
+      this.engine.bgColor    = '#f9f3e9';
+      this.engine.glowBlend  = 'multiply';
+      this.engine.glowAlpha  = 0.38;
+      this.engine.barBlend   = 'multiply';
+      this.engine.barAlpha   = 0.22;
+      this.engine.colorBoost = 1.0;
+      btn.setAttribute('aria-label', 'Thème sombre');
+      btn.title = 'Thème sombre';
+    } else {
+      document.documentElement.dataset.theme = 'dark';
+      this.engine.bgColor    = '#090910';
+      this.engine.glowBlend  = 'screen';
+      this.engine.glowAlpha  = 0.40;
+      this.engine.barBlend   = 'source-over';
+      this.engine.barAlpha   = 0.28;
+      this.engine.colorBoost = 1.1;
+      btn.setAttribute('aria-label', 'Thème clair');
+      btn.title = 'Thème clair';
+    }
+    if (this.analysis) this._redraw(this._progress());
+    else this._drawIdle();
   }
 
   // ── UI helpers ────────────────────────────────────────────────────────────

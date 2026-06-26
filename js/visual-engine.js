@@ -15,14 +15,20 @@
  */
 class VisualEngine {
   constructor(canvas) {
-    this.canvas   = canvas;
-    this.ctx      = canvas.getContext('2d');
-    this.mode     = 'spiral';
-    this._pal     = null;
-    this._raw     = defaultPalette();
-    this._geo     = null;
-    this._geoKey  = '';
-    this.mode     = 'bloom';
+    this.canvas      = canvas;
+    this.ctx         = canvas.getContext('2d');
+    this._pal        = null;
+    this._raw        = defaultPalette();
+    this._geo        = null;
+    this._geoKey     = '';
+    this.mode        = 'bloom';
+    // Propriétés de thème (modifiées par App._toggleTheme)
+    this.bgColor     = '#f9f3e9';
+    this.glowBlend   = 'multiply';
+    this.glowAlpha   = 0.38;
+    this.barBlend    = 'multiply';
+    this.barAlpha    = 0.22;
+    this.colorBoost  = 1.0;
   }
 
   setPalette(colors) {
@@ -67,11 +73,11 @@ class VisualEngine {
 
     const ctx = this.ctx;
 
-    // ── Pass 1: Glow (blurred, multiply sur fond clair) ──────────────────
+    // ── Pass 1: Glow ──────────────────────────────────────────────────────
     ctx.save();
     ctx.filter                   = 'blur(8px)';
-    ctx.globalCompositeOperation = 'multiply';
-    ctx.globalAlpha              = 0.38;
+    ctx.globalCompositeOperation = this.glowBlend;
+    ctx.globalAlpha              = this.glowAlpha;
     ctx.lineCap                  = 'round';
     ctx.lineJoin                 = 'round';
     this._render(ctx, sub, p, 2.4);
@@ -87,7 +93,7 @@ class VisualEngine {
 
   clear() {
     const { ctx, _w: W, _h: H } = this;
-    ctx.fillStyle = '#f9f3e9';
+    ctx.fillStyle = this.bgColor;
     ctx.fillRect(0, 0, W, H);
   }
 
@@ -337,8 +343,8 @@ class VisualEngine {
 
     ctx.save();
     ctx.filter                   = 'blur(22px)';
-    ctx.globalCompositeOperation = 'multiply';
-    ctx.globalAlpha              = 0.22;
+    ctx.globalCompositeOperation = this.barBlend;
+    ctx.globalAlpha              = this.barAlpha;
 
     for (let i = 0; i < N; i++) {
       const h  = bars[i] * halfH;
@@ -382,7 +388,8 @@ class VisualEngine {
     const f   = pos - i0;
     const [r1, g1, b1] = pal[i0];
     const [r2, g2, b2] = pal[Math.min(i0 + 1, n - 1)];
-    return `rgb(${Math.round(r1+(r2-r1)*f)},${Math.round(g1+(g2-g1)*f)},${Math.round(b1+(b2-b1)*f)})`;
+    const k = this.colorBoost;
+    return `rgb(${Math.min(255,Math.round((r1+(r2-r1)*f)*k))},${Math.min(255,Math.round((g1+(g2-g1)*f)*k))},${Math.min(255,Math.round((b1+(b2-b1)*f)*k))})`;
   }
 }
 
