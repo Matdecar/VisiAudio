@@ -55,6 +55,15 @@ html, body {
 }
 [data-theme="dark"] .sel-wrap select option { background: #181428; }
 
+[data-theme="dark"] #loading-overlay {
+  background: rgba(9, 9, 16, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+[data-theme="dark"] #drag-overlay { background: rgba(9, 9, 16, 0.72); }
+
+[data-theme="dark"] .mode-btn.active { background: rgba(124, 77, 255, 0.15); }
+
 #canvas-fade { display: none; }
 
 /* ── Drag overlay ────────────────────────────────────────────────────────────── */
@@ -415,7 +424,7 @@ html, body {
   color: var(--muted);
   cursor: pointer; border-radius: 8px;
   transition: border-color 0.15s, color 0.15s, background 0.15s;
-  margin-left: 2px;
+  margin-left: auto;
 }
 .btn-theme svg { width: 14px; height: 14px; }
 .btn-theme:hover { border-color: var(--text); color: var(--text); background: var(--cream-2); }
